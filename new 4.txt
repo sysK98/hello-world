@@ -1,0 +1,298 @@
+<%@ Page language="c#" Codebehind="HSCST0020.aspx.cs" AutoEventWireup="false" Inherits="HSCS.WEB.T.HSCST0020" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
+<HTML>
+	<HEAD>
+		<title>HSCST0020</title>
+		<meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR">
+		<meta content="C#" name="CODE_LANGUAGE">
+		<meta content="JavaScript" name="vs_defaultClientScript">
+		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Last-Modified" content="0">
+		<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+		<meta http-equiv="Pragma" content="no-cache">
+		<script type="text/javascript" language="javascript">
+			function fn_Delete(seq, hidSeq, siteCd, hidSite, pyong, hidPyong,  sDelBtn) {
+
+               
+			   if (!confirm("삭제하시겠습니까?")) 
+			   {
+					return false;
+               }
+               var objSeq = document.getElementById(hidSeq);
+			   var objSite = document.getElementById(hidSite);
+			   var objPyong = document.getElementById(hidPyong);
+			   objSeq.value = seq;
+			   objSite.value = siteCd;
+			   objPyong.value = pyong;
+               document.getElementById(sDelBtn).click();
+               
+               
+       }
+		</script>
+	</HEAD>
+	<body>
+		<form id="HSCST0020" method="post" runat="server">
+			<table cellSpacing="0" cellPadding="0" width="100%" border="0" class="tblLayout">
+				<tr>
+					<td valign="top" width="10"><img height="512" src="../img/main_left01.gif" width="10"></td>
+					<td valign="top" align="center">
+						<!-- Main Title Start -->
+						<table cellspacing="0" cellpadding="0" width="100%" border="0">
+							<tr>
+								<td class="topStyle"></td>
+							</tr>
+							<tr>
+								<td>
+									<table cellspacing="0" cellpadding="0" width="100%" border="0" class="tblTopTitle">
+										<tr>
+											<td class="topSpace"></td>
+										</tr>
+										<tr>
+											<td class="Title01"><img height="15" src="../img/Tit_icon01.gif" width="27" align="absMiddle">PQC 
+												빠른점검 입력
+											</td>
+											<td class="post"><img height="7" src="../img/main_posticon01.gif" width="9"><span class="pageLocation">환경설정 
+													&gt; 상용구 관리 &gt; <span class='subTitle'>PQC빠른점검입력</span></span></td>
+										</tr>
+										<tr>
+											<td class="topSpace_1"></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+						<!--Main Title END -->
+						<!--TitleLine Start-->
+						<table cellspacing="0" cellpadding="0" width="100%" border="0">
+							<tr>
+								<td width="5"><img height="5" src="../img/main_lineleft01.gif" width="5"></td>
+								<td class="line01"></td>
+								<td width="5"><img height="5" src="../img/main_linerignt01.gif" width="5"></td>
+							</tr>
+							<tr>
+								<td colspan="3"></td>
+							</tr>
+						</table>
+						<!--TitleLine END-->
+						<table cellspacing="0" cellpadding="0" width="100%" border="0">
+							<colgroup>
+								<col align="left" width="6%">
+								<col align="left" width="24%">
+								<col align="left" width="6%">
+								<col align="left" width="30%">
+								<col align="left" width="16%">
+							</colgroup>
+							<tr>
+								<td class="Title03" colspan="3"><img src="../img/img_stit.gif" class="subIcon" align="left">PQC빠른점점입력
+								</td>
+							</tr>
+							<tr style="HEIGHT:25px;COLOR:#6d6d6d;BACKGROUND-COLOR:#f7f7f7">
+								<td align="center">
+									<b>현장</b>
+								</td>
+								<td align="left">
+									<asp:DropDownList ID="ddlSite" Runat="server" Width="220px" AutoPostBack="True"></asp:DropDownList>
+								</td>
+								<td align="center">
+									<b>평형</b>
+								</td>
+								<td align="left">
+									<asp:DropDownList ID="ddlPyong" Runat="server" Width="220px" AutoPostBack="True"></asp:DropDownList>
+								</td>
+								<td class="btnLayoutStyle" rowspan="5" width="120" style="VERTICAL-ALIGN:top">
+									<table border="0" cellpadding="0" cellspacing="0">
+										<tr>
+											<td>
+												<table border="0" cellpadding="0" cellspacing="0">
+													<tr>
+														<td align="left"><img src="../img/c_btn_left.gif"></td>
+														<td class="btnon" align="left" style="WIDTH:32px"><asp:button id="btnNew" Width="32px" runat="server" Text="신규" CssClass="incButton"></asp:button></td>
+														<td align="left"><img src="../img/c_btn_right.gif"></td>
+														<td align="left"><img src="../img/c_btn_left.gif"></td>
+														<td class="btnon" align="left" style="WIDTH:32px"><asp:button id="btnSave" Width="32px" runat="server" Text="추가" CssClass="incButton"></asp:button></td>
+														<td align="left"><img src="../img/c_btn_right.gif"></td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+						<table>
+							<tr>
+							</tr>
+						</table>
+						<table cellSpacing="0" cellPadding="0" width="100%" border="0">
+							<tr>
+								<td class="paragraphSpace_3">
+								</td>
+							</tr>
+							<tr>
+								<td width="100%" class="table_yline"></td>
+							</tr>
+							<tr>
+								<td>
+									<table cellSpacing="1" cellPadding="0" width="100%" border="0" class="listTable">
+										<tr class="listTitle">
+											<td align="center" width="14%">실</td>
+											<td align="center" width="14%">부위1</td>
+											<td align="center" width="14%">부위2</td>
+											<td align="center" width="14%">하자유형</td>
+											<td align="center" colSpan="2">점검내용</td>
+										</tr>
+										<tr bgcolor="#ffffff" height="100">
+											<td align="center"><asp:listbox id="lstSil" runat="server" AutoPostBack="True" Height="100px" Width="100%" CssClass="tdListbox"></asp:listbox></td>
+											<td align="center"><asp:listbox id="lstPart1" runat="server" AutoPostBack="True" Height="100px" Width="100%" CssClass="tdListbox"></asp:listbox></td>
+											<td align="center"><asp:listbox id="lstPart2" runat="server" AutoPostBack="True" Height="100px" Width="100%" CssClass="tdListbox"></asp:listbox></td>
+											<td align="center"><asp:listbox id="lstBSType" runat="server" Height="100px" Width="100%" CssClass="tdListbox"></asp:listbox></td>
+											<td align="center">
+												<asp:textbox id="txtNote" runat="server" Height="98px" TextMode="MultiLine" CssClass="tdTextArea"></asp:textbox>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+						<table>
+							<colgroup>
+								<col align="right" width="96%">
+								<col align="right" width="4%">
+							</colgroup>
+							<tr>
+								<td>
+								</td>
+								<td align="right">
+									<asp:Button ID="btnGridSave" Runat="Server" Text="저장" ></asp:Button>
+								</td>
+							</tr>
+						</table>
+						<table cellSpacing="1" cellPadding="0" width="100%" border="0" bgColor="#cccccc">
+							<colgroup>
+								<col align="left" width="10%">
+								<col align="left" width="5%">
+								<col align="left" width="8%">
+								<col align="left" width="7%">
+								<col align="left" width="7%">
+								<col align="left" width="8%">
+								<col align="left" width="18%">
+								<col align="left" width="6%">
+								<col align="left" width="8%">
+								<col align="left" width="8%">
+								<col align="left" width="8%">
+								<col align="left" width="8%">
+								<col align="left" width="0%">
+								<col align="left" width="0%">
+								<col align="left" width="0%">
+								<col align="left" width="0%">
+								<col align="left" width="0%">
+								<col align="left" width="0%">
+							</colgroup>
+							<asp:Repeater ID="rptList" Runat="server" OnItemDataBound="rptList_ItemDataBound">
+								<HeaderTemplate>
+									<tr class="listTitle">
+										<th style="display:none">
+											순번</th>
+										<th>
+											현장</th>
+										<th>
+											평형</th>
+										<th>
+											실</th>
+										<th>
+											부위1</th>
+										<th>
+											부위2</th>
+										<th>
+											하자유형</th>
+										<th>
+											점검내용</th>
+										<th>
+											우선순위</th>
+										<th>
+											사용구분</th>
+										<th>
+											최종등록자</th>
+										<th>
+											최종등록일</th>
+										<th>
+											수정</th>
+										<th>
+											삭제</th>
+										<th style="display:none">
+											우선순위(data)</th>
+										<th style="display:none">
+											flag</th>
+									</tr>
+								</HeaderTemplate>
+								<ItemTemplate>
+									<tr style="BORDER-TOP: #000000 solid; BORDER-RIGHT: #000000 solid; BORDER-BOTTOM: #000000 solid; BORDER-LEFT: #000000 solid; BACKGROUND-COLOR: white">
+										<td style="display:none">
+											<asp:Literal ID="ltrSeq" Runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrSite" runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrPyong" runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrSil" runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrPart1" runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrPart2" runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrDefect" runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrMemo" runat="server"></asp:Literal></td>
+										<td align="center" >
+											<asp:TextBox ID="txtOrderSeq" Runat="server" Width="20px" MaxLength="3" CssClass="rptTxtBox"  ></asp:TextBox>
+											
+										</td>
+										<td align="center">
+											<asp:DropDownList ID="ddlUseYn" Runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlUseYn_SelectedIndexChanged">
+												<asp:ListItem Value="Y" Text="사용"></asp:ListItem>
+												<asp:ListItem Value="N" Text="미사용"></asp:ListItem>
+											</asp:DropDownList></td>
+										<td>
+											<asp:Literal ID="ltrUpdIdNm" Runat="server"></asp:Literal></td>
+										<td>
+											<asp:Literal ID="ltrUpdDate" Runat="server"></asp:Literal></td>
+										<td align="center">
+											<asp:Button ID="btnMod" Runat="server" Text="수정" OnClick="btnMod_Click"></asp:Button></td>
+										<td align="center">
+											<asp:Button ID="btnDel" Runat="server" Text="삭제" OnClick="btnDelete_Click"></asp:Button></td>
+										<td style="display:none">
+											<asp:CheckBox ID="chkFlag" Runat="server"></asp:CheckBox>
+										<td style="display:none">
+											<asp:Literal ID="ltrOrderSeq" Runat="server"></asp:Literal></td>
+										<td style="display:none">
+											<asp:Literal ID="ltrSitecd" Runat="server"></asp:Literal></td>
+										<td style="display:none">
+											<asp:Literal ID="ltrSilCd" Runat="server"></asp:Literal></td>
+										<td style="display:none">
+											<asp:Literal ID="ltrPart1Cd" Runat="server"></asp:Literal></td>
+										<td style="display:none">
+											<asp:Literal ID="ltrPart2Cd" Runat="server"></asp:Literal></td>
+										<td style="display:none">
+											<asp:Literal ID="ltrBSTypeCd" Runat="server"></asp:Literal></td>
+									</tr>
+								</ItemTemplate>
+							</asp:Repeater>
+						</table>
+						<table style="display:none">
+							<tr>
+								<td>
+									<asp:TextBox ID="txtHidFlag" Runat="server"></asp:TextBox>
+									<asp:TextBox ID="txtHidSeq" Runat="server"></asp:TextBox>
+									<asp:TextBox ID="txtHidSite" Runat="server"></asp:TextBox>
+									<asp:TextBox ID="txtHidPyong" Runat="server"></asp:TextBox>
+									<asp:Button ID="btnSDelete" runat="server"></asp:Button>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</HTML>

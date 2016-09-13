@@ -1,0 +1,693 @@
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Web;
+using System.Web.SessionState;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.HtmlControls;
+using System.Text.RegularExpressions;
+
+
+using HSCS.BIZ.T;
+using HSCS.BIZ.UTL;
+
+
+namespace HSCS.WEB.T
+{
+	/// <summary>
+	/// HSCST0020에 대한 요약 설명입니다.
+	/// </summary>
+	public class HSCST0020 : PageBase
+	{
+		#region 변수 및 컨트롤 선언
+		
+		private BIZ.T.C_CST020 cst = new BIZ.T.C_CST020();
+		private Common.PageUtil util; 
+		private DataSet dataSet;
+		private string message;
+		private string tableName;
+		private int seqNo;
+		private string site_cd;
+		private string pyong;
+		private string sil_cd;
+		private string part1;
+		private string part2;
+		private string bsType;
+		private string note;
+		private int orderSeq;
+		private string useYn;
+		private string updId;
+		private string flag;
+
+		protected System.Web.UI.WebControls.Repeater rptList;
+		protected System.Web.UI.WebControls.DropDownList ddlSite;
+		protected System.Web.UI.WebControls.DropDownList ddlPyong;
+		protected System.Web.UI.WebControls.DropDownList ddlUseYn;
+		protected System.Web.UI.WebControls.ListBox lstSil;
+		protected System.Web.UI.WebControls.ListBox lstPart1;
+		protected System.Web.UI.WebControls.ListBox lstPart2;
+		protected System.Web.UI.WebControls.ListBox lstBSType;
+		protected System.Web.UI.WebControls.Button btnAdd;
+		protected System.Web.UI.WebControls.Button btnSave;
+		protected System.Web.UI.WebControls.TextBox txtOrderSeq;
+		protected System.Web.UI.WebControls.TextBox txtNote;
+		protected System.Web.UI.WebControls.TextBox txtHidSeq;
+		protected System.Web.UI.WebControls.TextBox txtHidSite;
+		protected System.Web.UI.WebControls.TextBox txtHidPyong;
+		protected System.Web.UI.WebControls.TextBox txtHidFlag;
+		protected System.Web.UI.WebControls.Button btnNew;
+		protected System.Web.UI.WebControls.Button btnSDelete;
+		protected System.Web.UI.WebControls.Button btnGridSave;
+		protected System.Web.UI.WebControls.CheckBox chkFlag;
+
+
+		private PageUtility _util;
+
+		protected HSCS.BIZ.UTL.BindSiteDDL m_bizObject = new HSCS.BIZ.UTL.BindSiteDDL();
+
+		private PageUtility getUtil()
+		{
+			if(_util == null)
+				_util = new PageUtility(this.Page);
+			return _util;
+		}
+
+		#endregion
+
+		private void Page_Load(object sender, System.EventArgs e)
+		{
+			btnSave.Attributes.Add("onclick", "return confirm('저장 하시겠습니까?')"); 
+			btnGridSave.Attributes.Add("onclick", "return confirm('저장 하시겠습니까?')"); 
+
+			
+			util = new Common.PageUtil(Page);
+
+			if(!IsPostBack)
+			{
+				m_bizObject.SetDDLSite(ddlSite, Session["LogID"]);
+
+				if ( Request.QueryString["SiteCode"] != null )
+				{
+					ddlSite.SelectedValue = Request.QueryString["SiteCode"];
+				}
+
+				ddlSite_SelectedIndexChanged(sender, e);
+
+				bind_dataGrid();
+				
+			}
+
+		}
+
+//		protected void Page_PreRender(object sender, EventArgs e)
+//		{
+//			try
+//			{
+//				if (Session["event_controle"] != null)
+//				{
+//					TextBox controle =(TextBox) Session["event_controle"];
+//
+//					
+//				}
+//			}
+//			catch (InvalidCastException inEx)
+//			{
+//			}
+//
+//		}
+
+		private void bind_dataGrid()
+		{
+			DataSet ds = cst.GetT020List(ddlSite.SelectedValue, ddlPyong.SelectedValue);
+			if(ds != null)
+			{
+				rptList.DataSource = ds;
+				rptList.DataBind();
+
+				
+			}
+			else
+			{
+				
+				rptList.DataSource = ds;
+				rptList.DataBind();
+
+				//lstSil.Items.Clear();
+				lstPart1.Items.Clear();
+				lstPart2.Items.Clear();
+				lstBSType.Items.Clear();
+			}
+			
+
+		}
+
+		protected void btnNew_Click(object sender, EventArgs e)
+		{
+			txtHidFlag.Text = "I";
+			txtHidSeq.Text = "";
+			
+			ddlSite_SelectedIndexChanged(sender, e);
+
+			bind_dataGrid();
+		}
+
+
+		protected void rptList_ItemDataBound(object sender, RepeaterItemEventArgs e)
+		{
+			if (e.Item.ItemType.Equals(ListItemType.Item) || e.Item.ItemType.Equals(ListItemType.AlternatingItem))
+			{
+				RepeaterItem item = e.Item as RepeaterItem;
+				DataRowView Dr = (DataRowView)item.DataItem;
+
+				HtmlTableRow tr = item.FindControl("tr") as HtmlTableRow;
+
+				string seq = Dr["SEQ_NO"].ToString();
+				string site = Dr["SITE_CD"].ToString();
+				string pyong = Dr["PYONG"].ToString();
+
+				Literal ltrSeq =  item.FindControl("ltrSeq") as Literal;
+				Literal ltrSite =  item.FindControl("ltrSite") as Literal;
+				Literal ltrPyong = item.FindControl("ltrPyong") as Literal;
+				Literal ltrSil =  item.FindControl("ltrSil") as Literal;
+				Literal ltrPart1 =  item.FindControl("ltrPart1") as Literal;
+				Literal ltrPart2 =  item.FindControl("ltrPart2") as Literal;
+				Literal ltrDefect =  item.FindControl("ltrDefect") as Literal;
+				Literal ltrOrderSeq =  item.FindControl("ltrOrderSeq") as Literal;
+				TextBox txtOrderSeq =  item.FindControl("txtOrderSeq") as TextBox;
+				Literal ltrMemo =  item.FindControl("ltrMemo") as Literal;
+				DropDownList ddlUseYn = (DropDownList)e.Item.FindControl("ddlUseYn");
+				Literal ltrUpdIdNm =  item.FindControl("ltrUpdIdNm") as Literal;
+				Literal ltrUpdDate =  item.FindControl("ltrUpdDate") as Literal;
+				Literal ltrSitecd =  item.FindControl("ltrSitecd") as Literal;
+				CheckBox chkFlag = item.FindControl("chkFlag") as CheckBox;
+				Button btnDel = item.FindControl("btnDel") as Button;
+				Literal ltrSilCd =  item.FindControl("ltrSilCd") as Literal;
+				Literal ltrPart1Cd =  item.FindControl("ltrPart1Cd") as Literal;
+				Literal ltrPart2Cd =  item.FindControl("ltrPart2Cd") as Literal;
+				Literal ltrBSTypeCd =  item.FindControl("ltrBSTypeCd") as Literal;
+
+
+				ltrSeq.Text = Dr["SEQ_NO"].ToString();
+				ltrSite.Text = Dr["SITE_NM"].ToString();
+				ltrPyong.Text = Dr["PYONG"].ToString();
+				ltrSil.Text = Dr["SIL_NM"].ToString();
+				ltrPart1.Text = Dr["PART1_NM"].ToString();
+				ltrPart2.Text = Dr["PART2_NM"].ToString();
+				ltrDefect.Text = Dr["DEFECT_NM"].ToString();
+				ltrOrderSeq.Text = Dr["ORDER_SEQ"].ToString();
+				txtOrderSeq.Text = Dr["ORDER_SEQ"].ToString();
+				ltrMemo.Text = Dr["CHECK_MEMO"].ToString();
+				ddlUseYn.SelectedValue = Dr["USE_YN"].ToString();
+				ltrUpdIdNm.Text = Dr["UPD_IDNM"].ToString();
+				ltrUpdDate.Text = Dr["UPD_DATE"].ToString();
+				ltrSitecd.Text = Dr["SITE_CD"].ToString();
+				chkFlag.Checked = false;
+				ltrSilCd.Text = Dr["SIL_CD"].ToString();
+				ltrPart1Cd.Text = Dr["PART1_CD"].ToString();
+				ltrPart2Cd.Text = Dr["PART2_CD"].ToString();
+				ltrBSTypeCd.Text = Dr["DEFECT_CD"].ToString();
+
+				btnDel.Attributes.Add("onclick", string.Format("return fn_Delete('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}' )", seq, txtHidSeq.ClientID, site, txtHidSite.ClientID, pyong, txtHidPyong.ClientID, btnSDelete.ClientID));
+
+			}
+		}
+
+
+		
+
+		private void ddlSite_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			tableName = "Pyong";
+			site_cd = ddlSite.SelectedValue;
+
+			dataSet = cst.GetPyongInfo(tableName, site_cd);
+
+			message = "평형정보가 없습니다.";
+			if (!util.IsNullDataSet(dataSet, message))
+			{
+				ddlPyong.DataSource = dataSet.Tables[tableName].DefaultView;
+				ddlPyong.DataTextField = "pyong";
+				ddlPyong.DataBind();
+				ddlPyong.Items.Insert(0, "선택");
+				lstSil.Items.Clear();
+				ddlPyong_SelectedIndexChanged(sender, e);
+			}
+			else
+			{
+				ddlPyong.Items.Clear();
+				lstSil.Items.Clear();
+				lstPart1.Items.Clear();
+				lstPart2.Items.Clear();
+				lstBSType.Items.Clear();
+				txtNote.Text = "";
+			}
+
+			bind_dataGrid();
+
+		}
+
+		private void ddlPyong_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+
+			tableName = "Sil";
+			site_cd = ddlSite.SelectedValue;
+			pyong = ddlPyong.SelectedValue;
+
+			dataSet = cst.GetSilInfo(tableName, site_cd, pyong);
+
+			if (pyong.Equals("0")) 
+			{
+				//lstSil.Items.Clear();
+				lstPart1.Items.Clear();
+				lstPart2.Items.Clear();
+				lstBSType.Items.Clear();
+				txtNote.Text="";
+			} 
+			else 
+			{
+				if (!util.IsNullDataSet(dataSet, message))
+				{
+					lstSil.DataSource = dataSet.Tables[tableName].DefaultView;
+					lstSil.DataTextField = "SIL_NM";
+					lstSil.DataValueField = "SIL_CD";
+					lstSil.DataBind();
+					
+				}
+				else
+				{
+					
+					lstPart1.Items.Clear();
+					lstPart2.Items.Clear();
+					lstBSType.Items.Clear();
+					txtNote.Text="";
+				}
+			}
+
+			bind_dataGrid();
+		}
+
+		private void lstSil_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			tableName = "Part1";
+			site_cd = ddlSite.SelectedValue;
+			pyong = ddlPyong.SelectedValue;
+			sil_cd = (lstSil.SelectedIndex == -1)?lstSil.Items[0].Value:lstSil.SelectedValue;
+			
+
+			dataSet = cst.GetPart1(tableName, site_cd, pyong, sil_cd);
+			message = "부위1의 정보가 없습니다.";
+			
+			
+			if (!util.IsNullDataSet(dataSet, message))
+			{
+				lstPart1.DataSource = dataSet.Tables[tableName].DefaultView;
+				lstPart1.DataTextField = "PART1_NM";
+				lstPart1.DataValueField = "PART1_CD";
+				lstPart1.DataBind();
+				lstPart1_SelectedIndexChanged(sender, e);
+			}
+			else
+			{
+				lstPart1.Items.Clear();
+				lstPart2.Items.Clear();
+				lstBSType.Items.Clear();
+				txtNote.Text="";
+			}
+		}
+
+		private void lstPart1_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			tableName = "Part2";
+			site_cd = ddlSite.SelectedValue;
+			pyong = ddlPyong.SelectedValue;
+			sil_cd = (lstSil.SelectedIndex == -1)?lstSil.Items[0].Value:lstSil.SelectedValue;
+			part1 = (lstPart1.SelectedIndex == -1)?lstPart1.Items[0].Value:lstPart1.SelectedValue;
+
+			dataSet = cst.GetPart2(tableName, site_cd, pyong, sil_cd, part1);
+			message = "부위2의 정보가 없습니다.";
+			
+			if (pyong.Equals("0")) 
+			{
+				lstPart2.Items.Clear();
+			} 
+			else 
+			{
+				if (!util.IsNullDataSet(dataSet, message))
+				{
+					lstPart2.DataSource = dataSet.Tables[tableName].DefaultView;
+					lstPart2.DataTextField = "PART2_NM";
+					lstPart2.DataValueField = "PART2_CD";
+					lstPart2.DataBind();
+					lstPart2_SelectedIndexChanged(sender, e);
+				}
+				else
+				{
+					lstPart2.Items.Clear();
+					lstBSType.Items.Clear();
+					txtNote.Text="";
+				}
+			}
+		}
+
+		private void lstPart2_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			//BS유형 선택
+			tableName = "BSType";
+			site_cd = ddlSite.SelectedValue;
+			sil_cd = (lstSil.SelectedIndex == -1)?lstSil.Items[0].Value:lstSil.SelectedValue;
+			part2 = (lstPart2.SelectedIndex == -1)?lstPart2.Items[0].Value:lstPart2.SelectedValue;
+
+			dataSet = cst.GetBSType(tableName, site_cd, part2, sil_cd);
+			message = "유형의 정보가 없습니다.";
+			
+			if (!util.IsNullDataSet(dataSet, message))
+			{
+				lstBSType.DataSource = dataSet.Tables[tableName].DefaultView;
+				lstBSType.DataTextField = "as_type_nm";
+				lstBSType.DataValueField = "as_type";
+				lstBSType.DataBind();
+			}
+			else
+			{
+				lstBSType.Items.Clear();
+				txtNote.Text="";
+			}
+			
+		}
+
+		public void ddlUseYn_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			DropDownList ddlUseYn = ((DropDownList) (sender));
+			
+			RepeaterItem rp1 = ((RepeaterItem)(ddlUseYn.NamingContainer));
+
+			CheckBox chkFlag = (CheckBox)rp1.FindControl("chkFlag");
+			chkFlag.Checked = true;
+		}
+
+		protected void btnSave_Click(object sender, EventArgs e)
+		{
+			saveData();
+		}
+
+		protected void btnMod_Click(object sender, EventArgs e)
+		{
+			
+			txtHidFlag.Text = "U";	//수정Flag
+			Button btnMod = sender as Button;
+			RepeaterItem item = btnMod.NamingContainer as RepeaterItem;
+			DataRowView Dr = (DataRowView)item.DataItem;
+			
+			
+
+			lstPart1.Items.Clear();
+			lstPart2.Items.Clear();
+			lstBSType.Items.Clear();
+
+			ddlPyong_SelectedIndexChanged(sender,e);
+
+
+			Literal ltrSeq = (Literal)item.FindControl("ltrSeq");
+			Literal ltrSitecd = (Literal)item.FindControl("ltrSitecd");
+			Literal ltrPyong = (Literal)item.FindControl("ltrPyong");
+			Literal ltrSilCd = (Literal)item.FindControl("ltrSilCd");
+			Literal ltrPart1Cd = (Literal)item.FindControl("ltrPart1Cd");
+			Literal ltrPart2Cd = (Literal)item.FindControl("ltrPart2Cd");
+			Literal ltrBSTypeCd = (Literal)item.FindControl("ltrBSTypeCd");
+			Literal ltrMemo = (Literal)item.FindControl("ltrMemo");
+
+			txtHidSeq.Text = ltrSeq.Text;
+			lstSil.SelectedValue = ltrSilCd.Text;
+			lstSil_SelectedIndexChanged(sender, e);
+			lstPart1.SelectedValue = ltrPart1Cd.Text;
+			lstPart1_SelectedIndexChanged(sender, e);
+			lstPart2.SelectedValue = ltrPart2Cd.Text;
+			lstPart2_SelectedIndexChanged(sender, e);
+			lstBSType.SelectedValue = ltrBSTypeCd.Text;
+			txtNote.Text = ltrMemo.Text;
+
+		}
+
+		protected void status_Change (object sender, EventArgs e)
+		{
+			
+			TextBox txtOrderSeq = ((TextBox) (sender));
+			RepeaterItem rp1 = ((RepeaterItem)(txtOrderSeq.NamingContainer));
+			CheckBox chkFlag = (CheckBox)rp1.FindControl("chkFlag");
+			
+			chkFlag.Checked = true;
+			
+
+
+		}
+
+		private void saveData()
+		{
+			
+			bool iRtn = false;
+
+			if (lstSil.SelectedIndex == -1)
+			{
+				getUtil().AlertMessage("실이 선택되지 않았습니다.");
+				return;
+			}
+
+			if (lstPart1.SelectedIndex == -1)
+			{
+				getUtil().AlertMessage("부위1이 선택되지 않았습니다.");
+				return;
+			}
+
+			if (lstPart2.SelectedIndex == -1)
+			{
+				getUtil().AlertMessage("부위2가 선택되지 않았습니다.");
+				return;
+			}
+
+			if (lstBSType.SelectedIndex == -1)
+			{
+				getUtil().AlertMessage("하자유형이 선택되지 않았습니다.");
+				return;
+			}
+			
+			
+			site_cd = ddlSite.SelectedValue;
+			pyong = ddlPyong.SelectedValue;
+			sil_cd = lstSil.SelectedValue;
+			part1 = lstPart1.SelectedValue;
+			part2 = lstPart2.SelectedValue;
+			bsType = lstBSType.SelectedValue;
+			note = txtNote.Text;
+			orderSeq = 99;		// 순번 default
+			useYn = "Y";		// 사용유무 default
+			updId = Session["LogID"].ToString();
+			flag = txtHidFlag.Text;
+			
+			if (flag == "I" || flag =="")
+			{
+				seqNo = 0;
+				DataSet ds = cst.checkDup(site_cd, pyong, sil_cd, part1, part2, bsType);
+				
+				if (ds != null)
+				{
+					getUtil().AlertMessage("실 + 부위1 + 부위2 + 하자유형 이 동일한 데이터가 있습니다. \n 데이터를 확인하세요.");	
+					return;
+				}
+
+				try 
+				{
+					iRtn = cst.iSaveT020(seqNo, site_cd, pyong, sil_cd, part1, part2, bsType, note,  orderSeq, useYn, updId   );
+				}
+
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+			}
+
+			else if (flag == "U")
+			{
+				seqNo = Int32.Parse(txtHidSeq.Text);
+				try 
+				{
+					iRtn = cst.uSaveT020(seqNo, site_cd, pyong, sil_cd, part1, part2, bsType, note,  orderSeq, useYn, updId   );
+				}
+
+				catch (Exception ex)
+				{
+					throw ex;
+				}
+			}
+
+			getUtil().AlertMessage("저장 하였습니다.");
+			txtHidFlag.Text ="";
+			txtHidSeq.Text ="";
+			
+			bind_dataGrid();
+
+		}
+
+		protected void btnDelete_Click(object sender, EventArgs e)
+		{
+
+			DeleteData();
+		}
+
+		private void DeleteData()
+		{
+			bool iRtn = false;
+
+			seqNo = Int32.Parse(txtHidSeq.Text);
+			site_cd = txtHidSite.Text;
+			pyong = txtHidPyong.Text;
+
+			try
+			{
+				iRtn = cst.DeleteT020(seqNo, site_cd, pyong);
+			}
+
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+
+			getUtil().AlertMessage("삭제 하였습니다.");
+			bind_dataGrid();
+		}
+
+		protected void btnGirdSave_Click (object sender, EventArgs e)
+		{
+			saveGridData();
+		}
+
+		private void saveGridData()
+		{
+			int Cnt = 0;
+
+			for (int i=0; i< rptList.Items.Count; i++)
+			{
+				bool iRtn = false;
+
+				CheckBox chkFlag		= rptList.Items[i].FindControl("ChkFlag") as CheckBox;
+				DropDownList ddlUseYn	= rptList.Items[i].FindControl("ddlUseYn") as DropDownList;
+				Literal ltrSeq			= rptList.Items[i].FindControl("ltrSeq") as Literal;
+				Literal ltrSitecd		= rptList.Items[i].FindControl("ltrSitecd") as Literal;
+				Literal ltrPyong		= rptList.Items[i].FindControl("ltrPyong") as Literal;
+				Literal ltrOrderSeq		= rptList.Items[i].FindControl("ltrOrderSeq") as Literal;
+				TextBox txtOrderSeq		= rptList.Items[i].FindControl("txtOrderSeq") as TextBox;
+
+				string p1 = ltrOrderSeq.Text;
+				string p2 = txtOrderSeq.Text;
+
+				if (p2 == "" || p2 == null)
+				{
+					getUtil().AlertMessage(i+1 +  " 행 " + "우선순위가 잘못 입력되었습니다.");
+					return;
+				}
+
+				if(chkFlag.Checked || p1 != p2)
+				{	
+					try
+					{
+						orderSeq = Int32.Parse(txtOrderSeq.Text) ;
+					}
+					catch
+					{
+						getUtil().AlertMessage("우선순위는 숫자만 입력가능합니다");
+						return;
+					}
+				}
+			}
+
+			for (int k=0; k< rptList.Items.Count; k++)
+			{
+				bool iRtn = false;
+
+				CheckBox chkFlag		= rptList.Items[k].FindControl("ChkFlag") as CheckBox;
+				DropDownList ddlUseYn	= rptList.Items[k].FindControl("ddlUseYn") as DropDownList;
+				Literal ltrSeq			= rptList.Items[k].FindControl("ltrSeq") as Literal;
+				Literal ltrSitecd		= rptList.Items[k].FindControl("ltrSitecd") as Literal;
+				Literal ltrPyong		= rptList.Items[k].FindControl("ltrPyong") as Literal;
+				Literal ltrOrderSeq		= rptList.Items[k].FindControl("ltrOrderSeq") as Literal;
+				TextBox txtOrderSeq		= rptList.Items[k].FindControl("txtOrderSeq") as TextBox;
+
+				string p1 = ltrOrderSeq.Text;
+				string p2 = txtOrderSeq.Text;
+
+				seqNo = Int32.Parse(ltrSeq.Text);
+				site_cd = ltrSitecd.Text;
+				pyong = ltrPyong.Text;
+				orderSeq = Int32.Parse(txtOrderSeq.Text) ;
+				useYn = ddlUseYn.SelectedValue;
+				updId = Session["LogID"].ToString();
+
+				
+				if(chkFlag.Checked==true || p1 != p2)
+				{
+					Cnt++;
+					try
+					{
+						iRtn = cst.uSaveStatusT020(seqNo, site_cd, pyong, orderSeq, useYn, updId);
+					}
+
+					catch (Exception ex)
+					{
+						throw ex;
+					}
+				}
+			}
+			if (Cnt >0)
+			{
+				getUtil().AlertMessage("저장 되었습니다.");
+				bind_dataGrid();
+				return;
+			}
+			if (Cnt ==0)
+			{
+				getUtil().AlertMessage("저장 할 데이터가 없습니다.");
+				return;
+			}
+
+		}
+
+
+
+
+
+		#region Web Form 디자이너에서 생성한 코드
+		override protected void OnInit(EventArgs e)
+		{
+			//
+			// CODEGEN: 이 호출은 ASP.NET Web Form 디자이너에 필요합니다.
+			//
+			InitializeComponent();
+			base.OnInit(e);
+		}
+		
+		/// <summary>
+		/// 디자이너 지원에 필요한 메서드입니다.
+		/// 이 메서드의 내용을 코드 편집기로 수정하지 마십시오.
+		/// </summary>
+		private void InitializeComponent()
+		{    
+			this.Load += new System.EventHandler(this.Page_Load);
+			this.ddlSite.SelectedIndexChanged += new System.EventHandler(this.ddlSite_SelectedIndexChanged);
+			this.ddlPyong.SelectedIndexChanged += new System.EventHandler(this.ddlPyong_SelectedIndexChanged);
+			this.lstSil.SelectedIndexChanged += new System.EventHandler(this.lstSil_SelectedIndexChanged);
+			this.lstPart1.SelectedIndexChanged += new System.EventHandler(this.lstPart1_SelectedIndexChanged);
+			this.lstPart2.SelectedIndexChanged += new System.EventHandler(this.lstPart2_SelectedIndexChanged);
+			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			this.btnSDelete.Click += new System.EventHandler(this.btnDelete_Click);
+			this.btnNew.Click += new System.EventHandler(this.btnNew_Click); 
+			this.btnGridSave.Click += new System.EventHandler(this.btnGirdSave_Click);
+			//this.txtOrderSeq.TextChanged += new System.EventHandler(this.status_Change);
+			//this.ddlUseYn.SelectedIndexChanged += new System.EventHandler(this.ddlUseYn_SelectedIndexChanged);
+			//this.ddlUseYn.SelectedIndexChanged += new System.EventHandler(this.ddlUseYn_SelectedIndexChanged);
+
+		}
+		#endregion
+	}
+}
